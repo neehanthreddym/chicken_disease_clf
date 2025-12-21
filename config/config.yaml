@@ -5,3 +5,8 @@ data_ingestion:
   source_URL: https://github.com/neehanthreddym/chicken_disease_dataset/raw/refs/heads/main/data/chicken_disease_dataset.zip
   local_data_file: artifacts/data_ingestion/data.zip
   unzip_dir: artifacts/data_ingestion/data
+
+base_model:
+  root_dir: artifacts/base_model
+  base_model_path: artifacts/base_model/base_model.h5
+  updated_model_path: artifacts/base_model/updated_model.h5

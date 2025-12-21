@@ -15,6 +15,7 @@ class DataIngestionPipeline:
         data_ingestion.download_data()
         data_ingestion.extract_zip_file()
         data_ingestion.organize_images_into_class_folders()
+        data_ingestion.print_data_summary()
 
 if __name__ == '__main__':
     try:

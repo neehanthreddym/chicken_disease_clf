@@ -71,15 +71,15 @@ class DataIngestion:
         Moves images from artifacts/.../data/images/*.jpg into class label folders.
         Label is inferred from filename prefix (before first dot).
         """
-        images_dir = self.config.unzip_dir / "images"
-        if not images_dir.exists():
-            raise FileNotFoundError(f"images folder not found at: {images_dir}")
+        self.images_dir = self.config.unzip_dir / "images"
+        if not self.images_dir.exists():
+            raise FileNotFoundError(f"images folder not found at: {self.images_dir}")
         
         class_dirs = {
-            "healthy": images_dir / "Healthy",
-            "salmo": images_dir / "Salmonella",
-            "cocci": images_dir / "Coccidiosis",
-            "ncd": images_dir / "New Castle Disease",
+            "healthy": self.images_dir / "Healthy",
+            "salmo": self.images_dir / "Salmonella",
+            "cocci": self.images_dir / "Coccidiosis",
+            "ncd": self.images_dir / "New Castle Disease",
         }
         
         # Ensure folders exist
@@ -96,7 +96,7 @@ class DataIngestion:
         moved, skipped, unknown = 0, 0, 0
         
         # Move images directly under images/
-        for f in images_dir.iterdir():
+        for f in self.images_dir.iterdir():
             if not f.is_file():
                 continue
             if f.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
@@ -117,5 +117,23 @@ class DataIngestion:
                 continue
 
             shutil.move(str(f), str(dest))
+            moved += 1
         
         logger.info(f"Organize images: moved={moved}, skipped={skipped}, unknown={unknown}")
+    
+    def print_data_summary(self):
+        img_exts = {".jpg", ".jpeg", ".png"}
+
+        logger.info(f"Data Summary @ {self.images_dir}")
+        logger.info("Classes: " + ", ".join(sorted([f.name for f in self.images_dir.iterdir() if f.is_dir()])))
+
+        class_counts = {}
+        total = 0
+
+        for class_dir in sorted([f for f in self.images_dir.iterdir() if f.is_dir()]):
+            n = sum(1 for f in class_dir.rglob("*") if f.suffix.lower() in img_exts)
+            class_counts[class_dir.name] = n
+            total += n
+        
+        class_summary = "\n".join([f"{k:20s} {v}" for k, v in class_counts.items()])
+        logger.info(f"Data Summary\n{class_summary}\nTOTAL: {total}")
