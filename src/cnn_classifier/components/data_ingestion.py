@@ -1,4 +1,6 @@
 import os
+import re
+import shutil
 from urllib import request
 import zipfile
 from pathlib import Path
@@ -44,16 +46,15 @@ class DataIngestion:
             zip_file_ref.extractall(unzip_path)
         
         # Rename top-level folder: train/ or Train/ -> images/
-        base = Path(unzip_path)
         src = None
-        for candidate in [base / "train", base / "Train"]:
+        for candidate in [unzip_path / "train", unzip_path / "Train"]:
             if candidate.exists() and candidate.is_dir():
                 src = candidate
                 break
         if src is None:
             return
         
-        dst = base / "images"
+        dst = unzip_path / "images"
         
         # If already renamed in a previous run, do nothing
         if dst.exists() and dst.is_dir():
@@ -64,3 +65,57 @@ class DataIngestion:
             raise FileExistsError(f"Cannot rename to '{dst}': path exists.")
         
         src.rename(dst)
+    
+    def organize_images_into_class_folders(self) -> None:
+        """
+        Moves images from artifacts/.../data/images/*.jpg into class label folders.
+        Label is inferred from filename prefix (before first dot).
+        """
+        images_dir = self.config.unzip_dir / "images"
+        if not images_dir.exists():
+            raise FileNotFoundError(f"images folder not found at: {images_dir}")
+        
+        class_dirs = {
+            "healthy": images_dir / "Healthy",
+            "salmo": images_dir / "Salmonella",
+            "cocci": images_dir / "Coccidiosis",
+            "ncd": images_dir / "New Castle Disease",
+        }
+        
+        # Ensure folders exist
+        for cls in class_dirs.values():
+            cls.mkdir(parents=True, exist_ok=True)
+        
+        def normalize_key(stem: str) -> str:
+            s = stem.lower().strip()
+            s = re.sub(r"[^a-z]", "", s)
+            if s.startswith("pcr"):
+                s = s[3:]
+            return s
+        
+        moved, skipped, unknown = 0, 0, 0
+        
+        # Move images directly under images/
+        for f in images_dir.iterdir():
+            if not f.is_file():
+                continue
+            if f.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
+                continue
+
+            # filename like: pcrhealthy.123.jpg -> image filename prefix is "pcrhealthy"
+            img_filename_prefix = f.name.split(".")[0]
+            key = normalize_key(img_filename_prefix)
+
+            target_dir = class_dirs.get(key)
+            if target_dir is None:
+                unknown += 1
+                continue
+            
+            dest = target_dir / f.name
+            if dest.exists():
+                skipped += 1
+                continue
+
+            shutil.move(str(f), str(dest))
+        
+        logger.info(f"Organize images: moved={moved}, skipped={skipped}, unknown={unknown}")
