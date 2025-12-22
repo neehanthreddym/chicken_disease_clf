@@ -18,3 +18,9 @@ class BaseModelConfig:
     params_weights: str
     params_learning_rate: float
     params_classes: int
+
+@dataclass
+class CallbacksConfig:
+    root_dir: Path
+    tensorboard_log_dir: Path
+    model_checkpoint_filepath: Path
