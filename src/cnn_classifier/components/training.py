@@ -4,7 +4,7 @@ from pathlib import Path
 import math
 
 class Training:
-    def __init__(self, config=TrainingConfig):
+    def __init__(self, config: TrainingConfig):
         self.config = config
         self.train_generator = None
         self.valid_generator = None
@@ -104,6 +104,9 @@ class Training:
             validation_data=self.valid_generator,
             callbacks=callback_list
         )
+
+        # Load the best model saved by ModelCheckpoint
+        self.model = tf.keras.models.load_model(self.config.model_checkpoint_filepath)
 
         self.save_model(
             path=self.config.trained_model_path,

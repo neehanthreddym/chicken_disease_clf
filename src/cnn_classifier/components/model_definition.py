@@ -3,7 +3,7 @@ from cnn_classifier.entity.pipeline_config import BaseModelConfig
 from pathlib import Path
 
 class BaseModel:
-    def __init__(self, config = BaseModelConfig):
+    def __init__(self, config: BaseModelConfig):
         self.config=config
     
     def get_base_model(self):

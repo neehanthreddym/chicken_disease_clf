@@ -4,7 +4,7 @@ import tensorflow as tf
 from cnn_classifier.config.configuration import CallbacksConfig
 
 class Callbacks:
-    def __init__(self, config=CallbacksConfig):
+    def __init__(self, config: CallbacksConfig):
         self.config = config
     
     @property
@@ -22,9 +22,18 @@ class Callbacks:
             filepath=self.config.model_checkpoint_filepath,
             save_best_only=True
         )
+
+    @property
+    def _create_early_stopping(self):
+        return tf.keras.callbacks.EarlyStopping(
+            monitor='val_accuracy',
+            patience=5,
+            restore_best_weights=True
+        )
     
     def get_tb_ckpt_callbacks(self):
         return [
             self._create_tb_callbacks,
-            self._create_ckpt_callbacks
+            self._create_ckpt_callbacks,
+            self._create_early_stopping
         ]

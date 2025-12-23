@@ -1,11 +1,13 @@
 import os
+from pathlib import Path
 from cnn_classifier.constants import *
 from cnn_classifier.utils.utilities import read_yaml, create_directories
 from cnn_classifier.entity.pipeline_config import (
     DataIngestionConfig,
     BaseModelConfig,
     CallbacksConfig,
-    TrainingConfig
+    TrainingConfig,
+    EvaluationConfig
 )
 
 class ConfigurationManager:
@@ -86,7 +88,19 @@ class ConfigurationManager:
             params_epochs=params.EPOCHS,
             params_is_augmentation=params.AUGMENTATION,
             params_image_size=params.IMAGE_SIZE,
-            params_learning_rate=params.LEARNING_RATE
+            params_learning_rate=params.LEARNING_RATE,
+            model_checkpoint_filepath=Path(self.config.callbacks.model_checkpoint_filepath)
         )
 
-        return training_config    
+        return training_config
+
+    def get_evaluation_config(self) -> EvaluationConfig:
+        evaluation_config = EvaluationConfig(
+            model_path=Path('artifacts/training/trained_model.h5'),
+            training_data=Path('artifacts/data_ingestion/data/images'),
+            params=self.params,
+            params_image_size=self.params.IMAGE_SIZE,
+            params_batch_size=self.params.BATCH_SIZE
+        )
+
+        return evaluation_config    

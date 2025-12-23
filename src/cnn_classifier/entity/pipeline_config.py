@@ -36,3 +36,12 @@ class TrainingConfig:
     params_is_augmentation: bool
     params_image_size: list
     params_learning_rate: float
+    model_checkpoint_filepath: Path
+
+@dataclass
+class EvaluationConfig:
+    model_path: Path
+    training_data: Path
+    params: dict
+    params_image_size: list
+    params_batch_size: int

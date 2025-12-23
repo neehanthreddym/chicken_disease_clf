@@ -1,0 +1,10 @@
+{
+    "loss": 0.17099042236804962,
+    "accuracy": 0.9745815396308899,
+    "class_names": [
+        "Coccidiosis",
+        "Healthy",
+        "New Castle Disease",
+        "Salmonella"
+    ]
+}

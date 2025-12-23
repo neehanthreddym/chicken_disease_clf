@@ -1,9 +1,21 @@
 from cnn_classifier.utils.utilities import configure_tf_gpu_memory_growth
+import os
+import random
+import numpy as np
+import tensorflow as tf
+
+# Set random seeds for reproducibility
+os.environ['PYTHONHASHSEED'] = '0'
+random.seed(42)
+np.random.seed(42)
+tf.random.set_seed(42)
+
 configure_tf_gpu_memory_growth()
 
 from cnn_classifier.pipeline.stage01_data_ingestion import DataIngestionPipeline
 from cnn_classifier.pipeline.stage02_model_definition import ModelDefinitionPipeline
 from cnn_classifier.pipeline.stage03_training import ModelTrainingPipeline
+from cnn_classifier.pipeline.stage04_evaluation import ModelEvaluationPipeline
 from cnn_classifier import logger
 
 # Stage 01 - Data Ingestion Pipeline
@@ -32,10 +44,21 @@ except Exception as e:
 # Stage 03 - Training
 STAGE_NAME = "Stage 03 - Training"
 try:
-        logger.info(f">>> {STAGE_NAME}: started")
-        model_training_obj = ModelTrainingPipeline()
-        model_training_obj.execute_model_definition()
-        logger.info(f">>> {STAGE_NAME}: completed\n")
+    logger.info(f">>> {STAGE_NAME}: started")
+    model_training_obj = ModelTrainingPipeline()
+    model_training_obj.execute_model_definition()
+    logger.info(f">>> {STAGE_NAME}: completed\n")
+except Exception as e:
+    logger.exception(e)
+    raise e
+
+# Stage 04 - Evaluation
+STAGE_NAME = "Stage 04 - Evaluation"
+try:
+    logger.info(f">>> {STAGE_NAME}: started")
+    model_evaluation_obj = ModelEvaluationPipeline()
+    model_evaluation_obj.execute_model_evaluation()
+    logger.info(f">>> {STAGE_NAME}: completed\n")
 except Exception as e:
     logger.exception(e)
     raise e
