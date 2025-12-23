@@ -19,13 +19,13 @@ class BaseModel:
         )
     
     @staticmethod
-    def define_full_model(model, classes, freez_all, freeze_till, learning_rate):
+    def define_full_model(model, classes, freez_all, freeze_till):
         if freez_all:
             for layer in model.layers:
-                layer.trainable = False
+                model.trainable = False
         if (freeze_till is not None) and (freeze_till > 0):
             for layer in model.layers[:-freeze_till]:
-                layer.trainable = False
+                model.trainable = False
             
         flatten_layer = tf.keras.layers.Flatten()(model.output)
         output_layer = tf.keras.layers.Dense(
@@ -38,11 +38,11 @@ class BaseModel:
             outputs=output_layer
         )
 
-        full_model.compile(
-            optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
-            loss=tf.keras.losses.CategoricalCrossentropy(),
-            metrics=["accuracy"]
-        )
+        # full_model.compile(
+        #     optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
+        #     loss=tf.keras.losses.CategoricalCrossentropy(),
+        #     metrics=["accuracy"]
+        # )
         full_model.summary()
 
         return full_model
@@ -52,8 +52,8 @@ class BaseModel:
             model=self.model,
             classes=self.config.params_classes,
             freez_all=True,
-            freeze_till=None,
-            learning_rate=self.config.params_learning_rate
+            freeze_till=None
+            # learning_rate=self.config.params_learning_rate
         )
 
         self.save_model(

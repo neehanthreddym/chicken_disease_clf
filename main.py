@@ -1,5 +1,9 @@
+from cnn_classifier.utils.utilities import configure_tf_gpu_memory_growth
+configure_tf_gpu_memory_growth()
+
 from cnn_classifier.pipeline.stage01_data_ingestion import DataIngestionPipeline
 from cnn_classifier.pipeline.stage02_model_definition import ModelDefinitionPipeline
+from cnn_classifier.pipeline.stage03_training import ModelTrainingPipeline
 from cnn_classifier import logger
 
 # Stage 01 - Data Ingestion Pipeline
@@ -21,6 +25,17 @@ try:
     model_definition_obj = ModelDefinitionPipeline()
     model_definition_obj.execute_model_definition()
     logger.info(f">>> {STAGE_NAME}: completed\n")
+except Exception as e:
+    logger.exception(e)
+    raise e
+
+# Stage 03 - Training
+STAGE_NAME = "Stage 03 - Training"
+try:
+        logger.info(f">>> {STAGE_NAME}: started")
+        model_training_obj = ModelTrainingPipeline()
+        model_training_obj.execute_model_definition()
+        logger.info(f">>> {STAGE_NAME}: completed\n")
 except Exception as e:
     logger.exception(e)
     raise e

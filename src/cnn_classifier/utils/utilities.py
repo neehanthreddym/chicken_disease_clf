@@ -8,6 +8,7 @@ from box.exceptions import BoxValueError
 from box import ConfigBox
 from ensure import ensure_annotations
 import base64
+import tensorflow as tf
 from cnn_classifier import logger
 
 @ensure_annotations
@@ -131,3 +132,14 @@ def decodeImage(imgstring, fileName):
     with open(fileName, 'wb') as f:
         f.write(imgdata)
         f.close()
+
+def configure_tf_gpu_memory_growth():
+    gpus = tf.config.list_physical_devices("GPU")
+    if not gpus:
+        logger.info("No GPU found. Running on CPU.")
+        return
+
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+
+    logger.info(f"Enabled memory growth for {len(gpus)} GPU(s).")

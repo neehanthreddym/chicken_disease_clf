@@ -4,7 +4,8 @@ from cnn_classifier.utils.utilities import read_yaml, create_directories
 from cnn_classifier.entity.pipeline_config import (
     DataIngestionConfig,
     BaseModelConfig,
-    CallbacksConfig
+    CallbacksConfig,
+    TrainingConfig
 )
 
 class ConfigurationManager:
@@ -45,7 +46,7 @@ class ConfigurationManager:
             params_image_size=self.params.IMAGE_SIZE,
             params_include_top=self.params.INCLUDE_TOP,
             params_weights=self.params.WEIGHTS,
-            params_learning_rate=self.params.LEARNING_RATE,
+            # params_learning_rate=self.params.LEARNING_RATE,
             params_classes=self.params.CLASSES
         )
         return base_model_config
@@ -65,3 +66,27 @@ class ConfigurationManager:
         )
 
         return callbacks_config
+    
+    def get_training_config(self) -> TrainingConfig:
+        training = self.config.training
+        base_model = self.config.base_model
+        params = self.params
+        training_data = os.path.join(self.config.data_ingestion.unzip_dir, "images")
+
+        create_directories([
+            Path(training.root_dir)
+        ])
+
+        training_config = TrainingConfig(
+            root_dir=Path(training.root_dir),
+            trained_model_path=Path(training.trained_model_path),
+            updated_base_model_path=Path(base_model.updated_model_path),
+            training_data=Path(training_data),
+            params_batch_size=params.BATCH_SIZE,
+            params_epochs=params.EPOCHS,
+            params_is_augmentation=params.AUGMENTATION,
+            params_image_size=params.IMAGE_SIZE,
+            params_learning_rate=params.LEARNING_RATE
+        )
+
+        return training_config    
