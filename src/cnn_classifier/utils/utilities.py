@@ -1,4 +1,6 @@
 import os
+import random
+import numpy as np
 from pathlib import Path
 from typing import Any
 import yaml
@@ -143,3 +145,17 @@ def configure_tf_gpu_memory_growth():
         tf.config.experimental.set_memory_growth(gpu, True)
 
     logger.info(f"Enabled memory growth for {len(gpus)} GPU(s).")
+
+def set_global_seed(seed: int = 42):
+    """
+    Set random seeds for reproducibility across all libraries.
+    Call this at the START of any stage that uses randomness.
+    """    
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    os.environ['TF_DETERMINISTIC_OPS'] = '1'
+    
+    random.seed(seed)
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
+    
+    logger.info(f"Global random seed set to {seed}")

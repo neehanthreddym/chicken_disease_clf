@@ -1,6 +1,6 @@
 {
-    "loss": 0.17099042236804962,
-    "accuracy": 0.9745815396308899,
+    "loss": 0.4039039611816406,
+    "accuracy": 0.9380037188529968,
     "class_names": [
         "Coccidiosis",
         "Healthy",

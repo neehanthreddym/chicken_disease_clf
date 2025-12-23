@@ -1,6 +1,7 @@
 from cnn_classifier.config.configuration import ConfigurationManager
 from cnn_classifier.components.callbacks import Callbacks
 from cnn_classifier.components.training import Training
+from cnn_classifier.utils.utilities import set_global_seed, configure_tf_gpu_memory_growth
 from cnn_classifier import logger
 
 STAGE_NAME = "Stage 03 - Training"
@@ -22,6 +23,8 @@ class ModelTrainingPipeline:
         training.train(callback_list=callback_list)
 
 if __name__ == '__main__':
+    set_global_seed(42)
+    configure_tf_gpu_memory_growth()
     try:
         logger.info(f">>> {STAGE_NAME}: started")
         model_training_obj = ModelTrainingPipeline()

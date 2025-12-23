@@ -1,0 +1,53 @@
+stages:
+  data_ingestion:
+    cmd: python3 src/cnn_classifier/pipeline/stage01_data_ingestion.py
+    deps:
+      - src/cnn_classifier/pipeline/stage01_data_ingestion.py
+      - config/config.yaml
+    outs:
+      - artifacts/data_ingestion/data/images
+  
+  model_definition:
+    cmd: python3 src/cnn_classifier/pipeline/stage02_model_definition.py
+    deps:
+      - src/cnn_classifier/pipeline/stage02_model_definition.py
+      - config/config.yaml
+    params:
+      - IMAGE_SIZE
+      - INCLUDE_TOP
+      - WEIGHTS
+      - CLASSES
+    outs:
+      - artifacts/base_model
+  
+  model_training:
+    cmd: python3 src/cnn_classifier/pipeline/stage03_training.py
+    deps:
+      - src/cnn_classifier/components/callbacks.py
+      - src/cnn_classifier/pipeline/stage03_training.py
+      - config/config.yaml
+      - artifacts/data_ingestion/data/images
+      - artifacts/base_model
+    params:
+      - SEED
+      - IMAGE_SIZE
+      - EPOCHS
+      - BATCH_SIZE
+      - AUGMENTATION
+      - LEARNING_RATE
+    outs:
+      - artifacts/training/trained_model.h5
+  
+  model_evaluation:
+    cmd: python3 src/cnn_classifier/pipeline/stage04_evaluation.py
+    deps:
+      - src/cnn_classifier/pipeline/stage04_evaluation.py
+      - config/config.yaml
+      - artifacts/data_ingestion/data/images
+      - artifacts/training/trained_model.h5
+    params:
+      - IMAGE_SIZE
+      - BATCH_SIZE
+    metrics:
+      - evaluation_scores.json:
+          cache: false
