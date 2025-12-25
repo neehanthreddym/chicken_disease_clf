@@ -1,5 +1,6 @@
 tensorflow==2.18.0
-tensorflow-metal==1.2.0  # GPU acceleration for Apple Silicon M3 Pro
+# GPU acceleration for Apple Silicon M3 Pro
+tensorflow-metal==1.2.0; platform_system=="Darwin" and platform_machine=="arm64"
 pandas
 numpy
 matplotlib
@@ -16,4 +17,5 @@ joblib
 fastapi
 uvicorn
 python-multipart
+pillow
 -e .
