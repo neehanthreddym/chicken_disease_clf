@@ -123,17 +123,21 @@ def get_size(path: Path) -> str:
     size_in_kb = round(os.path.getsize(path)/1024)
     return f"~ {size_in_kb} KB"
 
-def encodeImageIntoBase64(croppedImagePath):
-    """Encode an image file into a Base64 string."""
-    with open(croppedImagePath, "rb") as f:
-        return base64.b64encode(f.read())
+# def encodeImageIntoBase64(croppedImagePath):
+#     """Encode an image file into a Base64 string."""
+#     with open(croppedImagePath, "rb") as f:
+#         return base64.b64encode(f.read())
 
-def decodeImage(imgstring, fileName):
-    """Decode a Base64 string and save it as an image file."""
-    imgdata = base64.b64decode(imgstring)
-    with open(fileName, 'wb') as f:
-        f.write(imgdata)
-        f.close()
+# def decodeImage(imgstring, fileName):
+#     """Decode a Base64 string and save it as an image file."""
+#     imgdata = base64.b64decode(imgstring)
+#     with open(fileName, 'wb') as f:
+#         f.write(imgdata)
+#         f.close()
+
+def bytes_to_data_url(image_bytes: bytes, mime_type: str) -> str:
+    b64 = base64.b64encode(image_bytes).decode("utf-8")
+    return f"data:{mime_type};base64,{b64}"
 
 def configure_tf_gpu_memory_growth():
     gpus = tf.config.list_physical_devices("GPU")
