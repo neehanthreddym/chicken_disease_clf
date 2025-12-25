@@ -91,7 +91,7 @@ jobs:
         
       - name: Stop and remove containers if running
         run: |
-          docker ps -q --filter 'name=cnnclf' | grep -q . && docker stop cnnclf && docker rm -fv cnnclf
+          docker rm -f cnnclf 2>/dev/null || true
             
       - name: Run docker image to serve users
         run: |
