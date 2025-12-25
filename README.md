@@ -5,6 +5,7 @@ A CNN-based image classification system for identifying chicken diseases using d
 ## Features
 - **Deep Learning**: Uses a CNN (VGG16 based) for image classification.
 - **DVC Pipeline**: Automated pipeline for data ingestion, model definition, training, and evaluation.
+- **Web Interface**: User-friendly web app built with FastAPI and Bootstrap for easy interaction.
 - **Reproducibility**: Global random seed (42) and GPU memory growth configuration for consistent results.
 - **Experiment Tracking**: Tracks parameters (epochs, batch size, etc.) and metrics (accuracy, loss).
 
@@ -46,6 +47,16 @@ This will check for changes in dependencies and only run the necessary stages.
 2. **Model Definition** (`stage02_model_definition.py`): Prepares the VGG16 base model.
 3. **Model Training** (`stage03_training.py`): Trains the model with augmented data.
 4. **Model Evaluation** (`stage04_evaluation.py`): Evaluates the trained model and saves scores.
+
+## Web Application
+
+The project includes a FastAPI-based web interface to easily classify images.
+
+1. Start the application:
+   ```bash
+   python app.py
+   ```
+2. Open your browser and navigate to `http://localhost:8000`.
 
 ## Reproducibility
 - **Random Seed**: A global seed of `42` is set for Python, NumPy, and TensorFlow to ensure reproducible training runs.
