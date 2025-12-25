@@ -1,7 +1,8 @@
 .DS_Store
 
 # Artifacts
-artifacts/*
+artifacts/data_ingestion
+artifacts/callbacks/tensorboard_log_dir
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
